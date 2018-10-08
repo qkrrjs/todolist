@@ -15,10 +15,9 @@
                     variant="success"
                     @click="Edit(name,todoss.id)"
                 >수정</b-button>
-                <b-button @click="toggle()">취소</b-button>
+                <b-button @click="Toggle()">취소</b-button>
             </b-input-group-append>
         </b-input-group>
-        {{FakeEditFlag}}
     </b-form>
 </template>
 
@@ -45,10 +44,14 @@ export default {
       this.id = id
       this.FakeEditFlag = EditFlag
     })
+    this.$EventBus.$on('NameSend', (name) => {
+      this.name = name
+    })
   },
   methods: {
-    toggle () {
+    Toggle () {
       this.$emit('changeMode')
+      this.$EventBus.$emit('FlagSend', this.FakeEditFlag)
     }
   },
   computed: {

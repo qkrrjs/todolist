@@ -4,7 +4,7 @@
       <p-check
           class="p-svg p-round p-smooth lefter"
           color="success"
-          v-show="EditFlag === false && this.sas === true"
+          v-show="this.Editer === false"
           v-model="FakeCompleteFlag"
       >
         <!-- svg path -->
@@ -19,7 +19,7 @@
         Interested
     </p-check> -->
       <span
-        v-show="EditFlag === false && this.sas === true"
+        v-show="!this.Editer"
         v-html="todoss.name"
         :class="FakeCompleteFlag ? 'complete' : 'ing'"
       />
@@ -27,14 +27,14 @@
         <b-button
             class="btn"
             variant='outline-primary'
-            v-show="EditFlag === false && !FakeCompleteFlag "
-            @click="d(todoss.id)"
+            v-show="!this.Editer"
+            @click="changeEditMode(todoss.id, todoss.name)"
         >수정</b-button>
         <b-button
           class="btn"
           variant='danger'
           style="cursor:pointer"
-          v-show="EditFlag === false && !FakeCompleteFlag && this.sas === true"
+          v-show="!this.Editer"
           @click="Delete(todoss.id)"
         >삭제</b-button>
       </div>
@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       id: 0,
-      sas: false,
+      Editer: false,
       FakeCompleteFlag: this.CompleteFlag
     }
   },
@@ -60,43 +60,31 @@ export default {
     CompleteFlag: Boolean
   },
   methods: {
-    a () {
-      console.log(this.EditFlag)
-    },
-    b (id) {
-      console.log(id)
-      this.id = id
-      this.$emit('changeMode')
-    },
-    c (id) {
-      for (let i = 0; i < this.lists.length; i++) {
-        this.lists[i].id === id ? this.id = id : this.id = this.id
+    changeEditMode (id, name) {
+      this.$EventBus.$emit('NameSend', name)
+      if (this.todoss.id === id) {
+        this.Editer = true
+        this.$emit('changeMode')
       }
-      console.log(this.CompleteFlag)
-      console.log(this.id)
-      this.$emit('Complete')
-    },
-    d (id) {
-      for (let i = 0; i < this.lists.length; i++) {
-        if (this.todoss.id === id) {
-          this.sas = false
-        } else {
-          this.sas = true
-          this.EditFlag = false
-        }
-      }
-      this.$emit('changeMode')
     }
   },
   computed: {
     ...mapGetters({
       lists: 'lists'
     })
+  },
+  created () {
+    this.$EventBus.$on('FlagSend', (EditFlag) => {
+      this.Editer = EditFlag
+    })
   }
 }
 </script>
 
 <style>
+  .a{
+    float: left;
+  }
   .lefter{
     float: left;
     margin-top:0.7rem;
