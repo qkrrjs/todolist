@@ -9,13 +9,13 @@
                <editList
                   :todoss="todoss"
                   :Edit="Edit"
-                  :EditFlag="EditFlag"
+                  :MainEditFlag="EditFlag"
                   @changeMode="Change(todoss.id)"
                 />
                <itemList
                   :todoss="todoss"
                   :Edit="Edit"
-                  :EditFlag="EditFlag"
+                  :MainEditFlag="EditFlag"
                   :Delete="Delete"
                   :CompleteFlag="CompleteFlag"
                   @changeMode="Change(todoss.id)"
@@ -61,14 +61,12 @@ export default {
         alert('공백 입력은 불가능합니다')
         return false
       } else {
-        console.log(this.EditFlag)
         this.EditFlag = !this.EditFlag
         this.$EventBus.$emit('FlagSend', this.EditFlag)
         this.$store.dispatch('EditItem', {
           name: name,
           id: id
         })
-        this.EditFlag = false
       }
     },
     Add (name) {

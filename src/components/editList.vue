@@ -1,10 +1,10 @@
 <template>
-    <b-form v-if="EditFlag === true && todoss.id === id">
+    <b-form v-if="MainEditFlag === true && todoss.id === id">
         <b-input-group>
             <b-form-input
                 class="a"
                 type="text"
-                v-show="EditFlag === true"
+                v-show="MainEditFlag === true"
                 :value="todoss.name"
                 v-model="name"
                 @keyup.enter.native="Edit(name,todoss.id)"
@@ -29,20 +29,19 @@ export default {
     return {
       name: '',
       id: 0,
-      FakeEditFlag: null
+      ElEditFlag: false
     }
   },
   props: {
     todoss: Object,
     Edit: Function,
-    EditFlag: Boolean
+    MainEditFlag: Boolean
   },
   created () {
-    this.$EventBus.$on('idSend', (id, EditFlag) => {
-      console.log(`editer value is :${id}`)
-      console.log(`Complete value : ${EditFlag}`)
-      this.id = id
-      this.FakeEditFlag = EditFlag
+    this.$EventBus.$on('idSend', (ClickedId, EditFlag) => {
+      console.log(`editer value is :${ClickedId}`)
+      this.id = ClickedId
+      this.ElEditFlag = EditFlag
     })
     this.$EventBus.$on('NameSend', (name) => {
       this.name = name
@@ -51,7 +50,7 @@ export default {
   methods: {
     Toggle () {
       this.$emit('changeMode')
-      this.$EventBus.$emit('FlagSend', this.FakeEditFlag)
+      this.$EventBus.$emit('FlagSend', this.ElEditFlag)
     }
   },
   computed: {

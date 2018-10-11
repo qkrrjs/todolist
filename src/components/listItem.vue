@@ -4,7 +4,7 @@
       <p-check
           class="p-svg p-round p-smooth lefter"
           color="success"
-          v-show="this.Editer === false"
+          v-show="!this.LiEditFlag"
           v-model="FakeCompleteFlag"
       >
         <!-- svg path -->
@@ -19,7 +19,7 @@
         Interested
     </p-check> -->
       <span
-        v-show="!this.Editer"
+        v-show="!this.LiEditFlag"
         v-html="todoss.name"
         :class="FakeCompleteFlag ? 'complete' : 'ing'"
       />
@@ -27,14 +27,14 @@
         <b-button
             class="btn"
             variant='outline-primary'
-            v-show="!this.Editer"
+            v-show="!this.LiEditFlag"
             @click="changeEditMode(todoss.id, todoss.name)"
         >수정</b-button>
         <b-button
           class="btn"
           variant='danger'
           style="cursor:pointer"
-          v-show="!this.Editer"
+          v-show="!this.LiEditFlag"
           @click="Delete(todoss.id)"
         >삭제</b-button>
       </div>
@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       id: 0,
-      Editer: false,
+      LiEditFlag: false,
       FakeCompleteFlag: this.CompleteFlag
     }
   },
@@ -56,14 +56,14 @@ export default {
     todoss: Object,
     Edit: Function,
     Delete: Function,
-    EditFlag: Boolean,
+    MainEditFlag: Boolean,
     CompleteFlag: Boolean
   },
   methods: {
-    changeEditMode (id, name) {
+    changeEditMode (ClickedId, name) {
       this.$EventBus.$emit('NameSend', name)
-      if (this.todoss.id === id) {
-        this.Editer = true
+      if (this.todoss.id === ClickedId) {
+        this.LiEditFlag = true
         this.$emit('changeMode')
       }
     }
@@ -75,7 +75,7 @@ export default {
   },
   created () {
     this.$EventBus.$on('FlagSend', (EditFlag) => {
-      this.Editer = EditFlag
+      this.LiEditFlag = EditFlag
     })
   }
 }
@@ -96,13 +96,15 @@ export default {
     display:inline-block;
     margin-top:0.5rem;
     margin-left:3.5rem;
+    font-weight:bold;
   }
   .complete{
     display:inline-block;
     margin-top:0.5rem;
-    color:#e6e6e6;
+    color:#BDBDBD;
     text-decoration:line-through;
-    margin-left:-3.5rem;
+    margin-left:3.5rem;
+    font-weight:bold;
   }
   .rightbox{
     float:right
