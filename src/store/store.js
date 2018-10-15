@@ -7,6 +7,7 @@ const SET_TODOS = 'SET_TODOS'
 const ADD_ITEM = 'ADD_ITEM'
 const SET_NAME = 'SET_NAME'
 const DELETE_ITEM = 'DELETE_ITEM'
+const LOAD_TODO = 'LOAD_TODO'
 
 export default new Vuex.Store({
   namespaced: true,
@@ -36,15 +37,28 @@ export default new Vuex.Store({
     // SET TODOS
     [SET_TODOS] (state, todos) {
       state.todos = todos
+    },
+    [LOAD_TODO] (state, todos) {
+      for (let i = 0; i < todos.length; i++) {
+        state.todos.push(todos[i])
+      }
     }
   },
   actions: {
     // LOAD TODO
-    GetTodos (state) {
-      axios.get('http://localhost:3001/todos')
+    GetTodos (state, LastId) {
+      let min
+      LastId === undefined ? min = 1 : min = LastId + 1
+      let max = min + 5
+      let url = `http://localhost:3001/todos?`
+      for (let i = min; i < max; i++) {
+        i === (max - 1) ? url += `id=${i}` : url += `id=${i}&`
+      }
+      console.log(url)
+      axios.get(url)
         .then((res) => {
           console.log(res.data)
-          state.commit('SET_TODOS', res.data)
+          LastId === undefined ? state.commit('SET_TODOS', res.data) : state.commit('LOAD_TODO', res.data)
         })
         .catch((e) => {
           console.log(e.message)

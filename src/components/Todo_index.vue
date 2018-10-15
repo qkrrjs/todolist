@@ -24,8 +24,8 @@
             </li>
             <li class="list-group-item">
               <span style="float:left">List items : ( {{lists.length}} )</span>
+              <b-btn style="margin-left:-140px" @click="GetTodos(lists.length)">More</b-btn>
             </li>
-            <li ></li>
           </ul>
     </b-container>
 </template>
@@ -75,8 +75,8 @@ export default {
     Delete (i) {
       this.$store.dispatch('DeleteItem', i)
     },
-    GetTodos () {
-      this.$store.dispatch('GetTodos')
+    GetTodos (LastId) {
+      this.$store.dispatch('GetTodos', LastId)
     },
     Change (id) {
       this.EditFlag = !this.EditFlag
