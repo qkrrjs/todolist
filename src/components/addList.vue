@@ -8,7 +8,7 @@
                 @keyup.enter.native="reset()"
             />
             <b-input-group-append>
-                <b-btn variant="info">추가</b-btn>
+                <b-btn variant="info" @click="CheckNull(name)">추가</b-btn>
             </b-input-group-append>
         </b-input-group>
     </b-form>
@@ -34,6 +34,7 @@ export default {
         alert('공백 입력은 불가능합니다')
       } else {
         this.Add(name)
+        this.reset()
       }
     }
   }
