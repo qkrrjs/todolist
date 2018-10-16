@@ -7,13 +7,13 @@
                 v-show="MainEditFlag === true"
                 :value="todoss.name"
                 v-model="name"
-                @keyup.enter.native="Edit(name,todoss.id)"
+                @keyup.enter.native="CheckNull(name,todoss.id)"
             />
             <b-input-group-append>
                 <b-button
                     :pressed="false"
                     variant="success"
-                    @click="Edit(name,todoss.id)"
+                    @click="CheckNull(name,todoss.id)"
                 >수정</b-button>
                 <b-button @click="Toggle()">취소</b-button>
             </b-input-group-append>
@@ -48,6 +48,13 @@ export default {
     })
   },
   methods: {
+    CheckNull (name, Id) {
+      if (name === null || name === '') {
+        alert('공백 입력은 불가능합니다')
+      } else {
+        this.Edit(name, Id)
+      }
+    },
     Toggle () {
       this.$emit('changeMode')
       this.$EventBus.$emit('FlagSend', this.ElEditFlag)
