@@ -38,6 +38,7 @@ export default new Vuex.Store({
     [SET_TODOS] (state, todos) {
       state.todos = todos
     },
+    // GET MORE TODO
     [LOAD_TODO] (state, todos) {
       for (let i = 0; i < todos.length; i++) {
         state.todos.push(todos[i])
@@ -46,19 +47,27 @@ export default new Vuex.Store({
   },
   actions: {
     // LOAD TODO
-    GetTodos (state, LastId) {
-      let min
-      LastId === undefined ? min = 1 : min = LastId + 1
-      let max = min + 5
-      let url = `http://localhost:3001/todos?`
-      for (let i = min; i < max; i++) {
-        i === (max - 1) ? url += `id=${i}` : url += `id=${i}&`
-      }
-      console.log(url)
-      axios.get(url)
+    FirstGetTodo (state) {
+      let EndValue = localStorage.getItem('EndValue')
+      let End
+      EndValue === null ||
+      EndValue === 'null' ||
+      parseInt(EndValue) === 0
+        ? End = 5
+        : End = EndValue
+      axios.get(`http://localhost:3001/todos?_start=0&_end=${End}`)
+        .then((res) => {
+          state.commit('SET_TODOS', res.data)
+        })
+        .catch((e) => {
+          console.log(e.message)
+        })
+    },
+    GetMoreTodo (state, LastId) {
+      axios.get(`http://localhost:3001/todos?_start=${LastId}&_limit=5`)
         .then((res) => {
           console.log(res.data)
-          LastId === undefined ? state.commit('SET_TODOS', res.data) : state.commit('LOAD_TODO', res.data)
+          state.commit(`LOAD_TODO`, res.data)
         })
         .catch((e) => {
           console.log(e.message)
@@ -89,6 +98,9 @@ export default new Vuex.Store({
       axios.delete(`http://localhost:3001/todos/${id}`)
         .then((res) => {
           state.commit('DELETE_ITEM', id)
+          id < 6
+            ? localStorage.setItem('EndValue', this.getters.lists.length)
+            : localStorage.setItem('EndValue', null)
         })
         .catch((e) => {
           if (e.res) {

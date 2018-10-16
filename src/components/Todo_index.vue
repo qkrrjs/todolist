@@ -24,7 +24,7 @@
             </li>
             <li class="list-group-item">
               <span style="float:left">List items : ( {{lists.length}} )</span>
-              <b-btn style="margin-left:-140px" @click="GetTodos(lists.length)">More</b-btn>
+              <b-btn style="margin-left:-140px" @click="GetMoreTodo(lists.length)">More</b-btn>
             </li>
           </ul>
     </b-container>
@@ -57,17 +57,12 @@ export default {
   },
   methods: {
     Edit (name, id) {
-      if (name === null || name === '') {
-        alert('공백 입력은 불가능합니다')
-        return false
-      } else {
-        this.EditFlag = !this.EditFlag
-        this.$EventBus.$emit('FlagSend', this.EditFlag)
-        this.$store.dispatch('EditItem', {
-          name: name,
-          id: id
-        })
-      }
+      this.EditFlag = !this.EditFlag
+      this.$EventBus.$emit('FlagSend', this.EditFlag)
+      this.$store.dispatch('EditItem', {
+        name: name,
+        id: id
+      })
     },
     Add (name) {
       this.$store.dispatch('AddItem', name)
@@ -75,8 +70,11 @@ export default {
     Delete (i) {
       this.$store.dispatch('DeleteItem', i)
     },
-    GetTodos (LastId) {
-      this.$store.dispatch('GetTodos', LastId)
+    FirstGetTodo () {
+      this.$store.dispatch('FirstGetTodo')
+    },
+    GetMoreTodo (LastId) {
+      this.$store.dispatch('GetMoreTodo', LastId)
     },
     Change (id) {
       this.EditFlag = !this.EditFlag
@@ -87,7 +85,7 @@ export default {
     }
   },
   mounted () {
-    this.GetTodos()
+    this.FirstGetTodo()
   }
 }
 </script>
