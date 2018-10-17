@@ -41,6 +41,7 @@ export default {
   name: 'TodoMain',
   data () {
     return {
+      AddCounter: 0,
       EditFlag: false,
       CompleteFlag: false
     }
@@ -65,7 +66,8 @@ export default {
       })
     },
     Add (name) {
-      this.$store.dispatch('AddItem', name)
+      this.AddCounter++
+      this.$store.dispatch('AddItem', { name: name, AddCounter: this.AddCounter })
     },
     Delete (i) {
       this.$store.dispatch('DeleteItem', i)

@@ -4,10 +4,10 @@ import axios from 'axios'
 Vue.use(Vuex)
 
 const SET_TODOS = 'SET_TODOS'
-const ADD_ITEM = 'ADD_ITEM'
-const SET_NAME = 'SET_NAME'
-const DELETE_ITEM = 'DELETE_ITEM'
 const LOAD_TODO = 'LOAD_TODO'
+const ADD_ITEM = 'ADD_ITEM'
+const EDIT_NAME = 'EDIT_NAME'
+const DELETE_ITEM = 'DELETE_ITEM'
 
 export default new Vuex.Store({
   namespaced: true,
@@ -20,25 +20,25 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    // ADD ( add )
+    // ADD ( AddItem )
     [ADD_ITEM] (state, payload) {
       state.todos.push(payload)
     },
-    // EDIT ( show , cancel )
-    [SET_NAME] (state, payload) {
+    // EDIT ( EditItem )
+    [EDIT_NAME] (state, payload) {
       const idx = state.todos.findIndex(list => list.id === payload.id)
       state.todos[idx].name = payload.name
     },
-    // DELETE ( delete )
+    // DELETE ( DeleteItem )
     [DELETE_ITEM] (state, id) {
       const idx = state.todos.findIndex(list => list.id === id)
       state.todos.splice(idx, 1)
     },
-    // SET TODOS
+    // SET TODOS ( GetFirstTodo )
     [SET_TODOS] (state, todos) {
       state.todos = todos
     },
-    // GET MORE TODO
+    // LOAD TODO ( GetMoreTodo )
     [LOAD_TODO] (state, todos) {
       for (let i = 0; i < todos.length; i++) {
         state.todos.push(todos[i])
@@ -48,7 +48,8 @@ export default new Vuex.Store({
   actions: {
     // LOAD TODO
     FirstGetTodo (state) {
-      let EndValue = localStorage.getItem('EndValue')
+      localStorage.setItem('AddCounter', null)
+      const EndValue = localStorage.getItem('EndValue')
       let End
       EndValue === null ||
       EndValue === 'null' ||
@@ -64,30 +65,44 @@ export default new Vuex.Store({
         })
     },
     GetMoreTodo (state, LastId) {
-      axios.get(`http://localhost:3001/todos?_start=${LastId}&_limit=5`)
+      const todos = this.getters.lists
+      const AddCounter = localStorage.getItem('AddCounter')
+      let LastIdValue
+      AddCounter === 'null'
+        ? LastIdValue = LastId
+        : LastIdValue = (LastId - parseInt(AddCounter))
+      axios.get(`http://localhost:3001/todos?_start=${LastIdValue}&_limit=5`)
         .then((res) => {
-          console.log(res.data)
-          state.commit(`LOAD_TODO`, res.data)
+          let ResTodo = res.data
+          // 리스트를 로드할때 방금 추가한 값이 중복 출력되는 걸 막기 위한 필터링 반복문
+          for (let i = 0; i < todos.length; i++) {
+            for (let j = 0; j < ResTodo.length; j++) {
+              if (todos[i].id === ResTodo[j].id) ResTodo.splice(j, 1)
+              else continue
+            }
+          }
+          state.commit(`LOAD_TODO`, ResTodo)
         })
         .catch((e) => {
           console.log(e.message)
         })
     },
     // ADD
-    AddItem (state, name) {
-      const todoData = { name: name }
+    AddItem (state, payload) {
+      const todoData = { name: payload.name }
       axios.post('http://localhost:3001/todos/', todoData)
         .then((res) => {
           state.commit('ADD_ITEM', res.data)
+          localStorage.setItem('AddCounter', payload.AddCounter)
         }).catch((e) => {
           console.error(e)
         })
     },
-    // EDIT ( show , cancle )
+    // EDIT
     EditItem (state, payload) {
       axios.put(`http://localhost:3001/todos/${payload.id}`, { name: payload.name })
         .then((res) => {
-          state.commit('SET_NAME', {name: res.data.name, id: res.data.id})
+          state.commit('EDIT_NAME', {name: res.data.name, id: res.data.id})
         })
         .catch((e) => {
           console.error(e)
@@ -96,11 +111,12 @@ export default new Vuex.Store({
     // DELETE
     DeleteItem (state, id) {
       axios.delete(`http://localhost:3001/todos/${id}`)
-        .then((res) => {
+        .then(() => {
           state.commit('DELETE_ITEM', id)
           id < 6
             ? localStorage.setItem('EndValue', this.getters.lists.length)
             : localStorage.setItem('EndValue', null)
+          localStorage.setItem('AddCounter', (localStorage.getItem('AddCounter') - 1))
         })
         .catch((e) => {
           if (e.res) {
