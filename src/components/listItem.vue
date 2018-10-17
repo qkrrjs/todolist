@@ -22,6 +22,7 @@
         v-show="!this.LiEditFlag"
         v-html="todoss.name"
         :class="FakeCompleteFlag ? 'complete' : 'ing'"
+        @click="changeEditMode(todoss.id, todoss.name)"
       />
       <div class="rightbox">
         <b-button
@@ -33,7 +34,6 @@
         <b-button
           class="btn"
           variant='danger'
-          style="cursor:pointer"
           v-show="!this.LiEditFlag"
           @click="Delete(todoss.id)"
         >삭제</b-button>
@@ -97,6 +97,7 @@ export default {
     margin-top:0.5rem;
     margin-left:3.5rem;
     font-weight:bold;
+    cursor: pointer;
   }
   .complete{
     display:inline-block;
@@ -111,5 +112,8 @@ export default {
   }
   .none{
     display:none
+  }
+  .btn{
+    cursor: pointer;
   }
 </style>
