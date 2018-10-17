@@ -4,6 +4,7 @@
             <b-form-input
                 id="lister"
                 type="text"
+                maxlength="40"
                 v-model="name"
                 @keyup.enter.native="reset()"
             />

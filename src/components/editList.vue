@@ -4,6 +4,7 @@
             <b-form-input
                 class="a"
                 type="text"
+                maxlength="40"
                 v-show="MainEditFlag === true"
                 :value="todoss.name"
                 v-model="name"
