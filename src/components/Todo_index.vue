@@ -62,7 +62,8 @@ export default {
       this.$EventBus.$emit('FlagSend', this.EditFlag)
       this.$store.dispatch('EditItem', {
         name: name,
-        id: id
+        id: id,
+        ErrorChecker: this.ErrorChecker
       })
     },
     Add (name) {
@@ -70,20 +71,38 @@ export default {
       this.$store.dispatch('AddItem', { name: name, AddCounter: this.AddCounter })
     },
     Delete (i) {
-      this.$store.dispatch('DeleteItem', i)
+      this.$store.dispatch('DeleteItem', {id: i, ErrorChecker: this.ErrorChecker})
     },
     FirstGetTodo () {
-      this.$store.dispatch('FirstGetTodo')
+      this.$store.dispatch('FirstGetTodo', this.ErrorChecker)
     },
     GetMoreTodo (LastId) {
-      this.$store.dispatch('GetMoreTodo', LastId)
+      this.$store.dispatch('GetMoreTodo', {LastId: LastId, ErrorChecker: this.ErrorChecker})
+      // if (this.EditFlag === true) {
+      //   this.EditFlag = !this.EditFlag
+      //   this.$EventBus.$emit('FlagSend', this.EditFlag)
+      // }
     },
     Change (id) {
-      this.EditFlag = !this.EditFlag
+      if (this.EditFlag) {
+        this.EditFlag = true
+      } else {
+        this.EditFlag = !this.EditFlag
+      }
       this.$EventBus.$emit('idSend', id, this.EditFlag)
+      console.log(this.EditFlag)
     },
     Complete (id) {
       this.CompleteFlag = !this.CompleteFlag
+    },
+    ErrorChecker (eCode) {
+      let msg = `Error Has Occurred. From `
+      eCode > 400 && eCode < 500
+        ? msg += `Client`
+        : eCode > 500
+          ? msg += `Server`
+          : msg = `???`
+      return msg
     }
   },
   mounted () {

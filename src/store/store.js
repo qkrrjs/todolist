@@ -47,7 +47,7 @@ export default new Vuex.Store({
   },
   actions: {
     // LOAD TODO
-    FirstGetTodo (state) {
+    FirstGetTodo (state, ErrorChecker) {
       localStorage.setItem('AddCounter', null)
       const EndValue = localStorage.getItem('EndValue')
       let End
@@ -61,12 +61,15 @@ export default new Vuex.Store({
           state.commit('SET_TODOS', res.data)
         })
         .catch((e) => {
-          console.log(e.message)
+          console.log(e.response.status)
+          alert(ErrorChecker(e.response.status))
+          // console.log(e.message)
         })
     },
-    GetMoreTodo (state, LastId) {
+    GetMoreTodo (state, payload) {
       const todos = this.getters.lists
       const AddCounter = localStorage.getItem('AddCounter')
+      const LastId = payload.LastId
       let LastIdValue
       AddCounter === 'null'
         ? LastIdValue = LastId
@@ -84,7 +87,8 @@ export default new Vuex.Store({
           state.commit(`LOAD_TODO`, ResTodo)
         })
         .catch((e) => {
-          console.log(e.message)
+          alert(payload.ErrorChecker(e.response.status))
+          // console.log(e.message)
         })
     },
     // ADD
@@ -95,7 +99,8 @@ export default new Vuex.Store({
           state.commit('ADD_ITEM', res.data)
           localStorage.setItem('AddCounter', payload.AddCounter)
         }).catch((e) => {
-          console.error(e)
+          alert(payload.ErrorChecker(e.response.status))
+          // console.error(e)
         })
     },
     // EDIT
@@ -105,11 +110,13 @@ export default new Vuex.Store({
           state.commit('EDIT_NAME', {name: res.data.name, id: res.data.id})
         })
         .catch((e) => {
-          console.error(e)
+          alert(payload.ErrorChecker(e.response.status))
+          // console.error(e)
         })
     },
     // DELETE
-    DeleteItem (state, id) {
+    DeleteItem (state, payload) {
+      let id = payload.id
       axios.delete(`http://localhost:3001/todos/${id}`)
         .then(() => {
           state.commit('DELETE_ITEM', id)
@@ -119,13 +126,14 @@ export default new Vuex.Store({
           localStorage.setItem('AddCounter', (localStorage.getItem('AddCounter') - 1))
         })
         .catch((e) => {
-          if (e.res) {
-            console.log(e)
-          } else if (e.request) {
-            console.log(e.request)
-          } else {
-            console.log('Error', e.message)
-          }
+          alert(payload.ErrorChecker(e.response.status))
+          // if (e.res) {
+          //   console.log(e)
+          // } else if (e.request) {
+          //   console.log(e.request)
+          // } else {
+          //   console.log('Error', e.message)
+          // }
         })
     }
   }
