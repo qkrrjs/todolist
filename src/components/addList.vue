@@ -1,5 +1,5 @@
 <template>
-    <b-form class="addform" @submit="CheckNull(name)">
+    <b-form class="addform" @submit="Deliverer(name)">
         <b-input-group>
             <b-form-input
                 id="lister"
@@ -9,7 +9,7 @@
                 @keyup.enter.native="reset()"
             />
             <b-input-group-append>
-                <b-btn variant="info" @click="CheckNull(name)">추가</b-btn>
+                <b-btn variant="info" @click="Deliverer(name)">추가</b-btn>
             </b-input-group-append>
         </b-input-group>
     </b-form>
@@ -27,14 +27,36 @@ export default {
     }
   },
   methods: {
+    TagCheck (name) {
+      let PassName = ``
+      const ParamName = name
+      for (let i = 0; i < ParamName.length; i++) {
+        const OnePieceName = ParamName.charAt(i)
+        OnePieceName === '<'
+          ? PassName += '&lt;'
+          : OnePieceName === '>'
+            ? PassName += '&gt;'
+            : PassName += OnePieceName
+      }
+      return PassName
+    },
+    BlankCheck (name) {
+      let ValueChecker = 0
+      for (let i = 0; i < name.length; i++) {
+        if (name.charAt(i) !== ` `) ValueChecker++
+        else continue
+      }
+      return ValueChecker
+    },
     reset () {
       this.name = null
     },
-    CheckNull (name) {
-      if (this.name === null || this.name === '') {
-        alert('공백 입력은 불가능합니다')
+    Deliverer (name) {
+      if (this.name === null || this.name === '' || this.BlankCheck(name) === 0) {
+        alert('공백만으로 이루어진 이름은 사용 불가능합니다')
+        return false
       } else {
-        this.Add(name)
+        this.Add(this.TagCheck(name))
         this.reset()
       }
     }
