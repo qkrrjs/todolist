@@ -61,7 +61,6 @@ export default new Vuex.Store({
           state.commit('SET_TODOS', res.data)
         })
         .catch((e) => {
-          console.log(e.response.status)
           alert(ErrorChecker(e.response.status))
           // console.log(e.message)
         })
@@ -74,7 +73,7 @@ export default new Vuex.Store({
       AddCounter === 'null'
         ? LastIdValue = LastId
         : LastIdValue = (LastId - parseInt(AddCounter))
-      axios.get(`http://localhost:3001/todos?_start=${LastIdValue}&_limit=5`)
+      axios.get(`http://localhost:3001/todos?_start=${LastIdValue}&_limit=${payload.limit}`)
         .then((res) => {
           let ResTodo = res.data
           // 리스트를 로드할때 방금 추가한 값이 중복 출력되는 걸 막기 위한 필터링 반복문
