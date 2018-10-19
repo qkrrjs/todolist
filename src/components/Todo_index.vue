@@ -11,6 +11,7 @@
                   :Edit="Edit"
                   :MainEditFlag="EditFlag"
                   @changeMode="Change(todoss.id)"
+                  @Cancel="Cancel(todoss.id)"
                 />
                <itemList
                   :todoss="todoss"
@@ -24,7 +25,8 @@
             </li>
             <li class="list-group-item">
               <span style="float:left">List items : ( {{lists.length}} )</span>
-              <b-btn style="margin-left:-140px" @click="GetMoreTodo(lists.length)">More</b-btn>
+              <b-btn style="margin-left:-140px" @click="GetMoreTodo(lists.length, 5)">More(5)</b-btn>
+              <b-btn @click="GetMoreTodo(lists.length, 20)">More(20)</b-btn>
             </li>
           </ul>
     </b-container>
@@ -57,6 +59,27 @@ export default {
     })
   },
   methods: {
+    // Load
+    FirstGetTodo () {
+      this.$store.dispatch('FirstGetTodo', this.ErrorChecker)
+    },
+    GetMoreTodo (LastId, limit) {
+      this.$store.dispatch('GetMoreTodo', {LastId: LastId, ErrorChecker: this.ErrorChecker, limit: limit})
+      if (this.EditFlag === true) {
+        this.EditFlag = !this.EditFlag
+        this.$EventBus.$emit('FlagSend', this.EditFlag)
+      }
+    },
+    // Add
+    Add (name) {
+      this.AddCounter++
+      this.$store.dispatch('AddItem', { name: name, AddCounter: this.AddCounter })
+    },
+    // Delete
+    Delete (i) {
+      this.$store.dispatch('DeleteItem', {id: i, ErrorChecker: this.ErrorChecker})
+    },
+    // Edit
     Edit (name, id) {
       this.EditFlag = !this.EditFlag
       this.$EventBus.$emit('FlagSend', this.EditFlag)
@@ -66,35 +89,24 @@ export default {
         ErrorChecker: this.ErrorChecker
       })
     },
-    Add (name) {
-      this.AddCounter++
-      this.$store.dispatch('AddItem', { name: name, AddCounter: this.AddCounter })
-    },
-    Delete (i) {
-      this.$store.dispatch('DeleteItem', {id: i, ErrorChecker: this.ErrorChecker})
-    },
-    FirstGetTodo () {
-      this.$store.dispatch('FirstGetTodo', this.ErrorChecker)
-    },
-    GetMoreTodo (LastId) {
-      this.$store.dispatch('GetMoreTodo', {LastId: LastId, ErrorChecker: this.ErrorChecker})
-      // if (this.EditFlag === true) {
-      //   this.EditFlag = !this.EditFlag
-      //   this.$EventBus.$emit('FlagSend', this.EditFlag)
-      // }
-    },
+    // Save & Cancel
     Change (id) {
       if (this.EditFlag) {
-        this.EditFlag = true
-      } else {
-        this.EditFlag = !this.EditFlag
+        this.EditFlag = false
+        this.$EventBus.$emit('FlagSend', this.EditFlag)
       }
+      this.EditFlag = true
       this.$EventBus.$emit('idSend', id, this.EditFlag)
-      console.log(this.EditFlag)
     },
+    Cancel (id) {
+      this.EditFlag = false
+      this.$EventBus.$emit('idSend', id, this.EditFlag)
+    },
+    // Complete Todo
     Complete (id) {
       this.CompleteFlag = !this.CompleteFlag
     },
+    // ErrorCheck method
     ErrorChecker (eCode) {
       let msg = `Error Has Occurred. From `
       eCode > 400 && eCode < 500
