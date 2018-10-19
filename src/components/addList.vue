@@ -6,7 +6,7 @@
                 type="text"
                 maxlength="40"
                 v-model="name"
-                @keyup.enter.native="reset()"
+                @keyup.esc.native="reset()"
             />
             <b-input-group-append>
                 <b-btn variant="info" @click="Deliverer(name)">추가</b-btn>
