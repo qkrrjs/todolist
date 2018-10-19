@@ -57,7 +57,7 @@ export default {
       }
     },
     Toggle () {
-      this.$emit('changeMode')
+      this.$emit('Cancel')
       this.$EventBus.$emit('FlagSend', this.ElEditFlag)
     }
   },
