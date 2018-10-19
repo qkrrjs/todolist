@@ -1,6 +1,5 @@
 <template>
     <div class="listwrap">
-      <div class="a">
       <p-check
           class="p-svg p-round p-smooth lefter"
           color="success"
@@ -9,15 +8,14 @@
       >
         <!-- svg path -->
         <svg slot="extra" class="svg svg-icon" viewBox="0 0 20 20">
-            <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
-            style="stroke: white;fill:white"></path>
+            <path
+            d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,
+            0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,
+            0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,
+            0.911L7.629,14.566z"
+            style="stroke: white;fill:white"/>
         </svg>
     </p-check>
-    </div>
-      <!-- <p-check class="p-icon p-round p-jelly" color="primary">
-        <i slot="extra" class="icon mdi mdi-check"></i>
-        Interested
-    </p-check> -->
       <span
         v-show="!this.LiEditFlag"
         v-html="todoss.name"
@@ -29,6 +27,7 @@
             class="btn"
             variant='outline-primary'
             v-show="!this.LiEditFlag"
+            :disabled="FakeCompleteFlag"
             @click="changeEditMode(todoss.id, todoss.name)"
         >수정</b-button>
         <b-button
@@ -62,10 +61,8 @@ export default {
   methods: {
     changeEditMode (ClickedId, name) {
       this.$EventBus.$emit('NameSend', name)
-      if (this.todoss.id === ClickedId) {
-        this.LiEditFlag = true
-        this.$emit('changeMode')
-      }
+      if (this.todoss.id === ClickedId) this.$emit('changeMode')
+      this.LiEditFlag = true
     }
   },
   computed: {
@@ -115,5 +112,8 @@ export default {
   }
   .btn{
     cursor: pointer;
+  }
+  .DisableBtn{
+    cursor:not-allowed;
   }
 </style>
