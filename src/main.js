@@ -14,7 +14,6 @@ import 'pretty-checkbox/src/pretty-checkbox.scss'
 
 Vue.config.productionTip = false
 Vue.prototype.$EventBus = new Vue()
-// Vue.prototype.$http = axios
 Vue.use(BootstrapVue)
 Vue.use(PrettyCheckbox)
 Vue.use(VueAxios, axios)
