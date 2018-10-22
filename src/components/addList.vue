@@ -5,11 +5,16 @@
                 id="lister"
                 type="text"
                 maxlength="40"
+                placeholder="Press ESC => Input Reset. (Edit Input is Same)"
                 v-model="name"
                 @keyup.esc.native="reset()"
+                @focus.native="$emit('EditModeCancel')"
             />
             <b-input-group-append>
-                <b-btn variant="info" @click="Deliverer(name)">추가</b-btn>
+                <b-btn
+                  variant="info"
+                  @click="Deliverer(name)">
+                추가</b-btn>
             </b-input-group-append>
         </b-input-group>
     </b-form>
@@ -19,7 +24,9 @@
 export default {
   name: 'addLister',
   props: {
-    Add: Function
+    Add: Function,
+    TagCheck: Function,
+    BlankCheck: Function
   },
   data () {
     return {
@@ -27,27 +34,6 @@ export default {
     }
   },
   methods: {
-    TagCheck (name) {
-      let PassName = ``
-      const ParamName = name
-      for (let i = 0; i < ParamName.length; i++) {
-        const OnePieceName = ParamName.charAt(i)
-        OnePieceName === '<'
-          ? PassName += '&lt;'
-          : OnePieceName === '>'
-            ? PassName += '&gt;'
-            : PassName += OnePieceName
-      }
-      return PassName
-    },
-    BlankCheck (name) {
-      let ValueChecker = 0
-      for (let i = 0; i < name.length; i++) {
-        if (name.charAt(i) !== ` `) ValueChecker++
-        else continue
-      }
-      return ValueChecker
-    },
     reset () {
       this.name = null
     },
