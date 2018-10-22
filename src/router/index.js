@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import TodoMain from '@/components/Todo_index.vue'
+import TodoMain from '@/components/ToDoMain.vue'
 
 Vue.use(Router)
 
