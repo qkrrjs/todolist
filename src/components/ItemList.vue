@@ -1,12 +1,12 @@
 <template>
-    <div :class="this.LiEditFlag ? 'editwrap' : 'listwrap'">
+    <div :class="MainEditFlag ? 'editwrap' : 'listwrap'">
       <div
         class="CompleteCover"
         @click="ChangeComplete(todoss.id, todoss.Complete)">
         <p-check
             class="p-svg p-round p-smooth lefter"
             color="success"
-            v-show="!this.LiEditFlag"
+            v-show="!MainEditFlag || todoss.id !== clickedId"
             v-model="todoss.Complete"
         >
           <!-- svg path -->
@@ -21,31 +21,18 @@
       </p-check>
     </div>
       <span
-        v-show="!this.LiEditFlag"
+        v-show="!MainEditFlag || todoss.id !== clickedId"
         v-html="todoss.name"
         :class="todoss.Complete ? 'complete' : 'ing'"
-        @click="changeEditMode(todoss.id, todoss.name, todoss.Complete)"
+        @dblclick="changeEditMode(todoss.id, todoss.name, todoss.Complete)"
       />
       <div class="rightbox">
         <b-button
-            class="btn"
-            variant='outline-primary'
-            v-show="!this.LiEditFlag"
-            :disabled="todoss.Complete"
-            @click="changeEditMode(todoss.id, todoss.name)"
-        >수정</b-button>
-        <b-button
           class="btn"
           variant='danger'
-          v-show="!this.LiEditFlag && !this.todoss.Complete"
+          v-show="!MainEditFlag || todoss.id !== clickedId"
           @click="Delete(todoss.id)"
-          style="width:63.63px;"
         >삭제</b-button>
-        <b-button
-          variant="success"
-          v-show="todoss.Complete"
-          @click="Delete(todoss.id)"
-        >Clear</b-button>
       </div>
     </div>
 </template>
@@ -64,15 +51,13 @@ export default {
     todoss: Object,
     Edit: Function,
     Delete: Function,
-    MainEditFlag: Boolean
+    MainEditFlag: Boolean,
+    clickedId: Number
   },
   methods: {
-    changeEditMode (ClickedId, name, Complete) {
-      if (!Complete) {
-        this.$EventBus.$emit('NameSend', name)
-        if (this.todoss.id === ClickedId) this.$emit('changeMode')
-        this.LiEditFlag = true
-      }
+    changeEditMode (clickid) {
+      this.$emit('changeId', clickid)
+      this.$emit('changeMode')
     },
     ChangeComplete (id, Complete) {
       this.$emit('Complete', id, Complete)
@@ -81,12 +66,6 @@ export default {
   computed: {
     ...mapGetters({
       lists: 'lists'
-    })
-  },
-  created () {
-    // 변경된 EditFlag를 EventBus로 수신하여 반영
-    this.$EventBus.$on('FlagSend', (EditFlag) => {
-      this.LiEditFlag = EditFlag
     })
   }
 }
@@ -106,7 +85,7 @@ export default {
   .ing{
     display:inline-block;
     margin-top:0.5rem;
-    margin-left:3.5rem;
+    margin-left:1rem;
     font-weight:bold;
     cursor: pointer;
   }
@@ -115,14 +94,14 @@ export default {
     margin-top:0.5rem;
     color:#BDBDBD;
     text-decoration:line-through;
-    margin-left:3.5rem;
+    margin-left:1rem;
     font-weight:bold;
   }
   .rightbox{
-    float:right
+    float:right;
   }
   .none{
-    display:none
+    display:none;
   }
   .btn{
     cursor: pointer;
