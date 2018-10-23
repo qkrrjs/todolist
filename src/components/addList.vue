@@ -5,7 +5,7 @@
                 id="lister"
                 type="text"
                 maxlength="40"
-                placeholder="Press ESC => Input Reset. (Edit Input is Same)"
+                placeholder="Press Esc = Input Reset"
                 v-model="name"
                 @keyup.esc.native="reset()"
                 @focus.native="$emit('EditModeCancel')"
@@ -24,9 +24,7 @@
 export default {
   name: 'addLister',
   props: {
-    Add: Function,
-    TagCheck: Function,
-    BlankCheck: Function
+    Add: Function
   },
   data () {
     return {
@@ -38,13 +36,8 @@ export default {
       this.name = null
     },
     Deliverer (name) {
-      if (this.name === null || this.name === '' || this.BlankCheck(name) === 0) {
-        alert('공백만으로 이루어진 이름은 사용 불가능합니다')
-        return false
-      } else {
-        this.Add(this.TagCheck(name))
-        this.reset()
-      }
+      this.Add(name)
+      this.reset()
     }
   }
 }
