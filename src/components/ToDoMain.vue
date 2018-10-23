@@ -1,38 +1,34 @@
 <template>
     <b-container>
         <div class="hello">
-              <h2 class="TitleName">TodoList</h2>
+          <h2 class="TitleName">TodoList</h2>
         </div>
-        <addList
-            :Add="Add"
-            :TagCheck="TagCheck"
-            :BlankCheck="BlankCheck"
-            @EditModeCancel="EditModeCancel()"
+        <AddList
+          :Add="Add"
           />
           <ul class="list-group">
             <li class="list-group-item" v-for="todoss in lists" :key="todoss.index">
-               <editList
+               <EditList
                   :todoss="todoss"
                   :Edit="Edit"
                   :MainEditFlag="EditFlag"
-                  :TagCheck="TagCheck"
-                  :BlankCheck="BlankCheck"
-                  @changeMode="Change(todoss.id)"
-                  @Cancel="Cancel(todoss.id)"
+                  :clickedId="clickedId"
+                  @changeMode="changeMode()"
                 />
                <itemList
                   :todoss="todoss"
                   :Edit="Edit"
                   :MainEditFlag="EditFlag"
                   :Delete="Delete"
-                  @changeMode="Change(todoss.id)"
-                  @Complete="Complete(todoss.id, todoss.Complete)"
+                  :clickedId="clickedId"
+                  @changeId="IdBind"
+                  @changeMode="changeMode()"
+                  @Complete="complete(todoss.id, todoss.Complete)"
                 />
             </li>
             <li class="list-group-item">
               <span style="float:left">List items : ( {{lists.length}} )</span>
-              <b-btn class="GetMoreBtn" @click="GetMoreTodo(lists.length, 5)">More(5)</b-btn>
-              <b-btn @click="GetMoreTodo(lists.length, 20)">More(20)</b-btn>
+              <b-btn class="moreBtn" @click="GetMoreTodo(lists[lists.length - 1].id, 5)">More(5)</b-btn>
             </li>
           </ul>
           <p class="bottom-text">Made By Clive</p>
@@ -50,14 +46,14 @@ export default {
   name: 'TodoMain',
   data () {
     return {
-      AddCounter: 0,
-      EditFlag: false
+      EditFlag: false,
+      clickedId: 0
     }
   },
   components: {
-    'editList': edit,
-    'addList': add,
-    'itemList': item
+    'EditList': edit,
+    'AddList': add,
+    'ItemList': item
   },
   computed: {
     ...mapGetters({
@@ -71,13 +67,10 @@ export default {
     },
     GetMoreTodo (LastId, limit) {
       this.$store.dispatch('GetMoreTodo', {LastId: LastId, limit: limit})
-      // 현재 EditMode가 활성화 중이라면 비활성화
-      this.EditModeCancel()
     },
     // Add
     Add (name) {
-      this.AddCounter++
-      this.$store.dispatch('AddItem', { name: name, AddCounter: this.AddCounter })
+      this.$store.dispatch('AddItem', { name: name })
     },
     // Delete
     Delete (i) {
@@ -85,58 +78,18 @@ export default {
     },
     // Edit
     Edit (name, id) {
-      this.EditFlag = !this.EditFlag
-      this.$EventBus.$emit('FlagSend', this.EditFlag)
-      this.$store.dispatch('EditItem', {
-        name: name,
-        id: id
-      })
-    },
-    EditModeCancel () {
-      if (this.EditFlag) {
-        this.EditFlag = false
-        this.$EventBus.$emit('FlagSend', this.EditFlag)
-      }
+      this.$store.dispatch('EditItem', { name: name, id: id })
+      this.changeMode()
     },
     // Complete Toggle
-    Complete (id, Complete) {
+    complete (id, Complete) {
       this.$store.dispatch('CompleteItem', {Id: id, Complete: Complete})
     },
-    // Save & Cancel
-    Change (id) {
-      // EditMode 활성화 상태일시 종료시킨 뒤 컴포넌트에 변경된 Flag전송
-      this.EditModeCancel()
-      this.EditFlag = true
-      this.$EventBus.$emit('idSend', id, this.EditFlag)
+    IdBind (id) {
+      this.clickedId = id
     },
-    Cancel (id) {
-      this.EditFlag = false
-      this.$EventBus.$emit('idSend', id, this.EditFlag)
-    },
-    // ( ADD , EDIT ) Input Checker
-    //
-    // Tag ->  '< >' check
-    TagCheck (name) {
-      let PassName = ``
-      const ParamName = name
-      for (let i = 0; i < ParamName.length; i++) {
-        const OnePieceName = ParamName.charAt(i)
-        OnePieceName === '<'
-          ? PassName += '&lt;'
-          : OnePieceName === '>'
-            ? PassName += '&gt;'
-            : PassName += OnePieceName
-      }
-      return PassName
-    },
-    // Blank (space) Check
-    BlankCheck (name) {
-      let ValueChecker = 0
-      for (let i = 0; i < name.length; i++) {
-        if (name.charAt(i) !== ` `) ValueChecker++
-        else continue
-      }
-      return ValueChecker
+    changeMode () {
+      this.EditFlag = !this.EditFlag
     }
   },
   mounted () {
@@ -160,15 +113,18 @@ li {
 a {
   color: #42b983;
 }
+.moreBtn {
+  margin-left:-110px;
+}
 .list-group{
   margin-top:35px;
 }
 .addform{
   margin-top:25px;
 }
-.GetMoreBtn{
-  margin-left:-130px;
-}
+// .GetMoreBtn{
+//   margin-left:-130px;
+// }
 .container{
   padding:0 1.5rem
 }
