@@ -1,7 +1,7 @@
 <template>
     <b-form
       v-if="MainEditFlag && todoss.id === id"
-      :class="MainEditFlag ? 'as' : 'bs'"
+      :class="MainEditFlag ? 'Edit' : 'Normal'"
       @submit="Deliverer(name,todoss.id)">
         <b-input-group>
             <b-form-input
@@ -86,10 +86,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .as{
+  .Edit{
     padding:0.3rem 0
   }
-  .bs{
+  .Normal{
     padding:0
   }
 </style>

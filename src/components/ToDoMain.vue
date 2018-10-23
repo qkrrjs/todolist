@@ -27,7 +27,6 @@
                   :Delete="Delete"
                   @changeMode="Change(todoss.id)"
                   @Complete="Complete(todoss.id, todoss.Complete)"
-                  @Renewal="RenewalComplete()"
                 />
             </li>
             <li class="list-group-item">
