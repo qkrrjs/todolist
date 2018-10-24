@@ -34,7 +34,9 @@ export default {
   },
   methods: {
     Deliverer (name, Id) {
-      this.Edit(name, Id)
+      // name = name.replace(/</g, '&lt;')
+      // name = name.replace(/>/g, '&gt;')
+      name === '' ? this.Cancel() : this.Edit(name, Id)
     },
     Cancel () {
       this.$emit('changer', null, false)
