@@ -2,12 +2,12 @@
     <div>
       <div
         class="CompleteCover"
-        @click="changeComplete(todoss.id, todoss.complete)"
+        @click="changeComplete()"
       >
           <p-check
               class="p-svg p-round p-smooth lefter"
               color="success"
-              v-show="!MainEditFlag || todoss.id !== clickedId"
+              v-show="!MainEditFlag && !viewFlag || todoss.id !== clickedId && !viewFlag"
               v-model="todoss.complete"
           >
             <!-- svg path -->
@@ -26,7 +26,7 @@
         @dblclick="changeEditMode(todoss.id, true, todoss.complete)"
         >
         <span
-          v-show="!MainEditFlag || todoss.id !== clickedId"
+          v-show="!MainEditFlag && !viewFlag || todoss.id !== clickedId && !viewFlag"
           v-html="todoss.name"
           :class="todoss.complete ? 'complete' : 'ing'"
         />
@@ -34,7 +34,7 @@
           <b-button
             class="btn"
             variant='danger'
-            v-show="!MainEditFlag || todoss.id !== clickedId"
+            v-show="!MainEditFlag && !viewFlag || todoss.id !== clickedId && !viewFlag"
             @click="Delete(todoss.id)"
           >삭제</b-button>
         </div>
@@ -57,7 +57,8 @@ export default {
     Edit: Function,
     Delete: Function,
     MainEditFlag: Boolean,
-    clickedId: Number
+    clickedId: Number,
+    viewFlag: Boolean
   },
   methods: {
     changeEditMode (clickid, flag, complete) {
@@ -67,8 +68,9 @@ export default {
       this.$emit('changer', clickid, flag)
       this.$emit('changeMode')
     },
-    changeComplete (id, complete) {
-      this.$emit('complete', id, complete)
+    changeComplete () {
+      console.log(this.viewFlag)
+      this.$emit('complete')
     }
   },
   computed: {
