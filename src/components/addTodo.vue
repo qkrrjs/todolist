@@ -36,6 +36,9 @@ export default {
       this.name = null
     },
     Deliverer (name) {
+      if (name.replace(/\s/g, '') === '') return false
+      name = name.replace('<', '&lt;')
+      name = name.replace('>', '&gt;')
       this.Add(name, false, false)
       this.reset()
     }
