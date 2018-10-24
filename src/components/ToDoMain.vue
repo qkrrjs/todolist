@@ -22,14 +22,21 @@
                   :MainEditFlag="EditFlag"
                   :Delete="Delete"
                   :clickedId="clickedId"
+                  :viewFlag="viewFlag"
                   @changer="binder"
                   @changeMode="changeMode()"
-                  @complete="complete(todoss.id, todoss.Complete)"
+                  @complete="complete(todoss.id, todoss.complete)"
                 />
+            </li>
+            <li class="list-group-item">
+              <b-btn variant="primary">All</b-btn>
+              <b-btn variant="warning">Active</b-btn>
+              <b-btn variant="success" @click="toggle()">Complete</b-btn>
             </li>
             <li class="list-group-item">
               <span style="float:left">List items : ( {{lists.length}} )</span>
               <b-btn class="moreBtn" @click="GetMoreTodo(lists.length, 5)">More(5)</b-btn>
+              <span style="float:right">complete Item : ( {{completeCounter}} )</span>
             </li>
           </ul>
           <p class="bottom-text">Made By Clive</p>
@@ -49,6 +56,8 @@ export default {
     return {
       EditFlag: false,
       elEditFlag: false,
+      viewFlag: false,
+      lastPassedId: 0,
       clickedId: 0
     }
   },
@@ -58,6 +67,13 @@ export default {
     'ItemList': item
   },
   computed: {
+    completeCounter () {
+      let count = 0
+      for (let i = 0; i < this.lists.length; i++) {
+        if (this.lists[i].complete) count++
+      }
+      return count
+    },
     ...mapGetters({
       lists: 'lists'
     })
@@ -72,8 +88,7 @@ export default {
     },
     // Add
     Add (name) {
-      this.elEditFlag = false
-      this.changeMode()
+      this.EditFlag = false
       this.$store.dispatch('AddItem', { name: name })
     },
     // Delete
@@ -83,7 +98,7 @@ export default {
     // Edit
     Edit (name, id) {
       this.$store.dispatch('EditItem', { name: name, id: id })
-      this.changeMode()
+      this.EditFlag = false
     },
     // Complete Toggle
     complete (id, complete) {
@@ -91,11 +106,23 @@ export default {
     },
     // EditMode Change ( binding -> change )
     binder (id, flag) {
+      // if (this.EditFlag === false) {
+      //   let idx = this.lists.findIndex(lists => lists.id === id)
+      //   console.log(this.lists[idx].name)
+      //   this.lists[idx].name = this.tagChanger(this.lists[idx].name)
+      // }
       this.clickedId = id
       this.elEditFlag = flag
     },
     changeMode () {
       this.elEditFlag ? this.EditFlag = true : this.EditFlag = false
+    },
+    tagChanger (name) {
+      name = name.replace(/&lt;/g, '<')
+      name = name.replace(/&gt;/g, '>')
+      return name
+    },
+    toggle () {
     }
   },
   mounted () {
@@ -119,9 +146,6 @@ li {
 a {
   color: #42b983;
 }
-.moreBtn {
-  margin-left:-110px;
-}
 .list-group{
   margin-top:35px;
 }
@@ -131,15 +155,18 @@ a {
 // .GetMoreBtn{
 //   margin-left:-130px;
 // }
-.container{
+.container {
   padding:0 1.5rem
 }
-.TitleName{
+.TitleName {
   margin-left:-20px
 }
-.bottom-text{
+.bottom-text {
   margin:20px 0;
   margin-left:-30px;
   bottom:0
+}
+.moreBtn {
+  margin-left:30px;
 }
 </style>
