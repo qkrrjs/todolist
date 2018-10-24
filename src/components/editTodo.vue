@@ -10,7 +10,7 @@
                 v-show="MainEditFlag"
                 :value="todoss.name"
                 v-model="name"
-                @keyup.esc.native="$emit('changeMode')"
+                @keyup.esc.native="Cancel()"
             />
         </b-input-group>
     </b-form>
@@ -19,7 +19,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  name: 'edit',
+  name: 'editTodo',
   data () {
     return {
       name: '',
@@ -35,6 +35,10 @@ export default {
   methods: {
     Deliverer (name, Id) {
       this.Edit(name, Id)
+    },
+    Cancel () {
+      this.$emit('changer', null, false)
+      this.$emit('changeMode')
     }
   },
   computed: {
@@ -46,7 +50,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .Edit {
-    padding: 0.3rem 0;
+    padding: 0 0;
   }
   .Normal {
     padding: 0;

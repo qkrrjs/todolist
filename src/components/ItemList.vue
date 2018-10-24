@@ -1,38 +1,43 @@
 <template>
-    <div :class="MainEditFlag ? 'editwrap' : 'listwrap'">
+    <div>
       <div
         class="CompleteCover"
-        @click="ChangeComplete(todoss.id, todoss.Complete)">
-        <p-check
-            class="p-svg p-round p-smooth lefter"
-            color="success"
-            v-show="!MainEditFlag || todoss.id !== clickedId"
-            v-model="todoss.Complete"
+        @click="changeComplete(todoss.id, todoss.complete)"
+      >
+          <p-check
+              class="p-svg p-round p-smooth lefter"
+              color="success"
+              v-show="!MainEditFlag || todoss.id !== clickedId"
+              v-model="todoss.complete"
+          >
+            <!-- svg path -->
+            <svg slot="extra" class="svg svg-icon" viewBox="0 0 20 20">
+                <path
+                d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,
+                0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,
+                0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,
+                0.911L7.629,14.566z"
+                style="stroke: white;fill:white"/>
+            </svg>
+        </p-check>
+      </div>
+      <div
+        class="listwrap"
+        @dblclick="changeEditMode(todoss.id, true, todoss.complete)"
         >
-          <!-- svg path -->
-          <svg slot="extra" class="svg svg-icon" viewBox="0 0 20 20">
-              <path
-              d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,
-              0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,
-              0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,
-              0.911L7.629,14.566z"
-              style="stroke: white;fill:white"/>
-          </svg>
-      </p-check>
-    </div>
-      <span
-        v-show="!MainEditFlag || todoss.id !== clickedId"
-        v-html="todoss.name"
-        :class="todoss.Complete ? 'complete' : 'ing'"
-        @dblclick="changeEditMode(todoss.id, todoss.name, todoss.Complete)"
-      />
-      <div class="rightbox">
-        <b-button
-          class="btn"
-          variant='danger'
+        <span
           v-show="!MainEditFlag || todoss.id !== clickedId"
-          @click="Delete(todoss.id)"
-        >삭제</b-button>
+          v-html="todoss.name"
+          :class="todoss.complete ? 'complete' : 'ing'"
+        />
+        <div class="rightbox">
+          <b-button
+            class="btn"
+            variant='danger'
+            v-show="!MainEditFlag || todoss.id !== clickedId"
+            @click="Delete(todoss.id)"
+          >삭제</b-button>
+        </div>
       </div>
     </div>
 </template>
@@ -40,7 +45,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  name: 'listItem',
+  name: 'ItemList',
   data () {
     return {
       id: 0,
@@ -55,12 +60,15 @@ export default {
     clickedId: Number
   },
   methods: {
-    changeEditMode (clickid) {
-      this.$emit('changeId', clickid)
+    changeEditMode (clickid, flag, complete) {
+      flag && !complete ? this.parentCaller(clickid, flag) : this.parentCaller(clickid, !flag)
+    },
+    parentCaller (clickid, flag) {
+      this.$emit('changer', clickid, flag)
       this.$emit('changeMode')
     },
-    ChangeComplete (id, Complete) {
-      this.$emit('Complete', id, Complete)
+    changeComplete (id, complete) {
+      this.$emit('complete', id, complete)
     }
   },
   computed: {
@@ -80,7 +88,7 @@ export default {
     margin-top:0.7rem;
   }
   .listwrap{
-    padding:0.5rem 0;
+    padding:0;
   }
   .ing{
     display:inline-block;
@@ -108,8 +116,5 @@ export default {
   }
   .DisableBtn{
     cursor:not-allowed;
-  }
-  .editwrap{
-    padding:0;
   }
 </style>

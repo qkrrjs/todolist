@@ -40,9 +40,6 @@ export default new Vuex.Store({
     },
     // LOAD TODO ( GetMoreTodo )
     [LOAD_TODO] (state, todos) {
-      // state.todos = [...state.todos, todos]
-      // console.log(state.todos)
-      // console.log(todos)
       state.todos = state.todos.concat(todos)
     }
   },
@@ -70,7 +67,7 @@ export default new Vuex.Store({
     },
     // ADD
     AddItem (state, payload) {
-      const todoData = { name: payload.name, Complete: false }
+      const todoData = { name: payload.name, complete: false }
       axios.post('http://localhost:3001/todos/', todoData)
         .then((res) => {
           state.commit('ADD_ITEM', res.data)
@@ -102,8 +99,8 @@ export default new Vuex.Store({
         })
     },
     // COMPLETE
-    CompleteItem (state, payload) {
-      axios.patch(`http://localhost:3001/todos/${payload.Id}`, { Complete: !payload.Complete })
+    completeItem (state, payload) {
+      axios.patch(`http://localhost:3001/todos/${payload.Id}`, { complete: !payload.complete })
         .catch((e) => {
           alert(`Complete Toggle Fail`)
           console.error(e)

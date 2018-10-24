@@ -5,16 +5,16 @@
                 id="lister"
                 type="text"
                 maxlength="40"
-                placeholder="Press Esc = Input Reset"
+                placeholder="What needs to be done?"
                 v-model="name"
                 @keyup.esc.native="reset()"
-                @focus.native="$emit('EditModeCancel')"
             />
             <b-input-group-append>
                 <b-btn
                   variant="info"
                   @click="Deliverer(name)">
-                추가</b-btn>
+                  추가
+            </b-btn>
             </b-input-group-append>
         </b-input-group>
     </b-form>
@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 'addLister',
+  name: 'addTodo',
   props: {
     Add: Function
   },
@@ -36,7 +36,7 @@ export default {
       this.name = null
     },
     Deliverer (name) {
-      this.Add(name)
+      this.Add(name, false, false)
       this.reset()
     }
   }

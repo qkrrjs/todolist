@@ -3,32 +3,33 @@
         <div class="hello">
           <h2 class="TitleName">TodoList</h2>
         </div>
-        <AddList
+        <AddToDo
           :Add="Add"
           />
           <ul class="list-group">
             <li class="list-group-item" v-for="todoss in lists" :key="todoss.index">
-               <EditList
+               <EditToDo
                   :todoss="todoss"
                   :Edit="Edit"
                   :MainEditFlag="EditFlag"
                   :clickedId="clickedId"
+                  @changer="binder"
                   @changeMode="changeMode()"
                 />
-               <itemList
+               <ItemList
                   :todoss="todoss"
                   :Edit="Edit"
                   :MainEditFlag="EditFlag"
                   :Delete="Delete"
                   :clickedId="clickedId"
-                  @changeId="IdBind"
+                  @changer="binder"
                   @changeMode="changeMode()"
-                  @Complete="complete(todoss.id, todoss.Complete)"
+                  @complete="complete(todoss.id, todoss.Complete)"
                 />
             </li>
             <li class="list-group-item">
               <span style="float:left">List items : ( {{lists.length}} )</span>
-              <b-btn class="moreBtn" @click="GetMoreTodo(lists[lists.length - 1].id, 5)">More(5)</b-btn>
+              <b-btn class="moreBtn" @click="GetMoreTodo(lists.length, 5)">More(5)</b-btn>
             </li>
           </ul>
           <p class="bottom-text">Made By Clive</p>
@@ -37,8 +38,8 @@
 
 <script>
 // api call -> api result === success ? state change & Re: render : Exception handling
-import edit from './editList'
-import add from './addList'
+import add from './AddToDo'
+import edit from './EditToDo'
 import item from './ItemList'
 import { mapGetters } from 'vuex'
 
@@ -47,12 +48,13 @@ export default {
   data () {
     return {
       EditFlag: false,
+      elEditFlag: false,
       clickedId: 0
     }
   },
   components: {
-    'EditList': edit,
-    'AddList': add,
+    'AddToDo': add,
+    'EditToDo': edit,
     'ItemList': item
   },
   computed: {
@@ -70,6 +72,8 @@ export default {
     },
     // Add
     Add (name) {
+      this.elEditFlag = false
+      this.changeMode()
       this.$store.dispatch('AddItem', { name: name })
     },
     // Delete
@@ -82,14 +86,16 @@ export default {
       this.changeMode()
     },
     // Complete Toggle
-    complete (id, Complete) {
-      this.$store.dispatch('CompleteItem', {Id: id, Complete: Complete})
+    complete (id, complete) {
+      this.$store.dispatch('completeItem', {Id: id, complete: complete})
     },
-    IdBind (id) {
+    // EditMode Change ( binding -> change )
+    binder (id, flag) {
       this.clickedId = id
+      this.elEditFlag = flag
     },
     changeMode () {
-      this.EditFlag = !this.EditFlag
+      this.elEditFlag ? this.EditFlag = true : this.EditFlag = false
     }
   },
   mounted () {
