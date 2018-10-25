@@ -37,9 +37,9 @@ export default {
     },
     Deliverer (name) {
       if (name.replace(/\s/g, '') === '') return false
-      name = name.replace('<', '&lt;')
-      name = name.replace('>', '&gt;')
-      this.Add(name, false, false)
+      name = name.replace(/&lt;/g, '<')
+      name = name.replace(/&gt;/g, '>')
+      this.Add(name)
       this.reset()
     }
   }
