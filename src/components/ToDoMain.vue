@@ -28,14 +28,25 @@
                   @complete="complete(todoss.id, todoss.complete)"
                 />
             </li>
-            <li class="list-group-item">
+            <!-- <li class="list-group-item">
               <b-btn variant="primary">All</b-btn>
               <b-btn variant="warning">Active</b-btn>
               <b-btn variant="success" @click="toggle()">Complete</b-btn>
-            </li>
+            </li> -->
             <li class="list-group-item">
-              <span style="float:left">List items : ( {{lists.length}} )</span>
-              <b-btn class="moreBtn" @click="GetMoreTodo(lists.length, 5)">More(5)</b-btn>
+              <span style="float:left">List items : ( {{listLength}} )</span>
+              <b-btn
+                class="moreBtn"
+                variant="outline-primary"
+                @click="GetMoreTodo(lists.length, 5)">
+                More(5)
+              </b-btn>
+              <b-btn
+                :variant="completeCounter === 0 ? 'outline-success' : 'success'"
+                :disabled="completeCounter === 0"
+                @click="clearComplete">
+                clearCompleted
+              </b-btn>
               <span style="float:right">complete Item : ( {{completeCounter}} )</span>
             </li>
           </ul>
@@ -68,11 +79,10 @@ export default {
   },
   computed: {
     completeCounter () {
-      let count = 0
-      for (let i = 0; i < this.lists.length; i++) {
-        if (this.lists[i].complete) count++
-      }
-      return count
+      return this.lists.filter(lists => lists.complete === true).length
+    },
+    listLength () {
+      return this.lists.length - this.completeCounter
     },
     ...mapGetters({
       lists: 'lists'
@@ -88,6 +98,7 @@ export default {
     },
     // Add
     Add (name) {
+      // this.changeMode()
       this.EditFlag = false
       this.$store.dispatch('AddItem', { name: name })
     },
@@ -99,6 +110,8 @@ export default {
     Edit (name, id) {
       this.$store.dispatch('EditItem', { name: name, id: id })
       this.EditFlag = false
+      // this.binder(id, false)
+      // this.changeMode()
     },
     // Complete Toggle
     complete (id, complete) {
@@ -108,8 +121,7 @@ export default {
     binder (id, flag) {
       // if (this.EditFlag === false) {
       //   let idx = this.lists.findIndex(lists => lists.id === id)
-      //   console.log(this.lists[idx].name)
-      //   this.lists[idx].name = this.tagChanger(this.lists[idx].name)
+      //   this.lists[idx].name = this.replacer(this.lists[idx].name)
       // }
       this.clickedId = id
       this.elEditFlag = flag
@@ -117,12 +129,16 @@ export default {
     changeMode () {
       this.elEditFlag ? this.EditFlag = true : this.EditFlag = false
     },
-    tagChanger (name) {
+    replacer (name) {
       name = name.replace(/&lt;/g, '<')
       name = name.replace(/&gt;/g, '>')
       return name
     },
-    toggle () {
+    clearComplete () {
+      let name = this.lists.filter(lists => lists.complete === true)
+      for (let i = 0; i < name.length; i++) {
+        this.Delete(this.lists[this.lists.findIndex(lists => lists.id === name[i].id)].id)
+      }
     }
   },
   mounted () {
