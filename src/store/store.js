@@ -46,7 +46,7 @@ export default new Vuex.Store({
   actions: {
     // LOAD TODO
     FirstGetTodo (state) {
-      axios.get(`http://localhost:3001/todos?_start=0&_end=5`)
+      axios.get(`http://localhost:3002/todos?_start=0&_end=5`)
         .then((res) => {
           state.commit('SET_TODOS', res.data)
         })
@@ -56,7 +56,7 @@ export default new Vuex.Store({
         })
     },
     GetMoreTodo (state, payload) {
-      axios.get(`http://localhost:3001/todos?_start=${payload.LastId}&_limit=${payload.limit}`)
+      axios.get(`http://localhost:3002/todos?_start=${payload.LastId}&_limit=${payload.limit}`)
         .then((res) => {
           state.commit(`LOAD_TODO`, res.data)
         })
@@ -68,7 +68,7 @@ export default new Vuex.Store({
     // ADD
     AddItem (state, payload) {
       const todoData = { name: payload.name, complete: false }
-      axios.post('http://localhost:3001/todos/', todoData)
+      axios.post('http://localhost:3002/todos/', todoData)
         .then((res) => {
           state.commit('ADD_ITEM', res.data)
         }).catch((e) => {
@@ -78,7 +78,7 @@ export default new Vuex.Store({
     },
     // EDIT
     EditItem (state, payload) {
-      axios.put(`http://localhost:3001/todos/${payload.id}`, { name: payload.name })
+      axios.put(`http://localhost:3002/todos/${payload.id}`, { name: payload.name })
         .then((res) => {
           state.commit('EDIT_NAME', {name: res.data.name, id: res.data.id})
         })
@@ -89,7 +89,7 @@ export default new Vuex.Store({
     },
     // DELETE
     DeleteItem (state, Id) {
-      axios.delete(`http://localhost:3001/todos/${Id}`)
+      axios.delete(`http://localhost:3002/todos/${Id}`)
         .then(() => {
           state.commit('DELETE_ITEM', Id)
         })
@@ -100,7 +100,7 @@ export default new Vuex.Store({
     },
     // COMPLETE
     completeItem (state, payload) {
-      axios.patch(`http://localhost:3001/todos/${payload.Id}`, { complete: !payload.complete })
+      axios.patch(`http://localhost:3002/todos/${payload.Id}`, { complete: !payload.complete })
         .catch((e) => {
           alert(`Complete Toggle Fail`)
           console.error(e)
