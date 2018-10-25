@@ -10,7 +10,7 @@
                 v-show="MainEditFlag"
                 :value="todoss.name"
                 v-model="name"
-                @keyup.esc.native="Cancel()"
+                @keyup.esc.native="Cancel(name,todoss.id)"
             />
         </b-input-group>
     </b-form>
@@ -34,13 +34,22 @@ export default {
   },
   methods: {
     Deliverer (name, Id) {
-      // name = name.replace(/</g, '&lt;')
-      // name = name.replace(/>/g, '&gt;')
-      name === '' ? this.Cancel() : this.Edit(name, Id)
+      // if (name.replace(/\s/g, '') === '') {
+      //   console.log(this.lists.findIndex(lists => lists.id === Id))
+      //   this.Edit(this.replacer(this.lists[this.lists.findIndex(lists => lists.id === Id)].name), Id)
+      // } else {
+      //   this.Edit(this.replacer(name), Id)
+      // }
+      this.Edit(name, Id)
     },
     Cancel () {
       this.$emit('changer', null, false)
       this.$emit('changeMode')
+    },
+    replacer (name) {
+      name = name.replace(/</g, '&lt;')
+      name = name.replace(/>/g, '&gt;')
+      return name
     }
   },
   computed: {
